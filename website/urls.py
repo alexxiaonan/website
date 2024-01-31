@@ -1,0 +1,38 @@
+"""
+URL configuration for whatsapptexting project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+
+from django.urls import path
+from . import views
+
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    #path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    
+    path('record/<int:pk>', views.customer_record, name='record'),
+    path('delete_customer_record/<int:pk>', views.delete_customer_record, name='delete_customer_record'),
+    path('add_customer_record/', views.add_customer_record, name='add_customer_record'),
+    path('update_customer_record/<int:pk>', views.update_customer_record, name='update_customer_record'),
+    
+    path('group_record/<int:pk>', views.group_record, name='group_record'),
+    path('delete_group_record/<int:pk>', views.delete_group_record, name='delete_group_record'),
+    path('add_group_record/', views.add_group_record, name='add_group_record'),
+    path('update_group_record/<int:pk>', views.update_group_record, name='update_group_record'),
+    
+    path('sender_record/<int:pk>', views.sender_record, name='sender_record'),
+]
