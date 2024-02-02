@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Record, Communication_Record, Group_Record
-from .forms import AddRecordForm, AddGroupForm
+from .models import Record, Communication_Record, Group_Record, Sender
+from .forms import AddRecordForm, AddGroupForm, AddSenderForm
 
 # Create your views here.
 
@@ -11,6 +11,7 @@ def home(request):
     # load data records
     records = Record.objects.all()
     group_records = Group_Record.objects.all()
+    sender_records = Sender.objects.all()
     
     
     
@@ -29,7 +30,7 @@ def home(request):
             messages.success(request, "Error Login...")
             return redirect('home')
     else:          
-        return render(request, 'home.html', {'records': records, 'group_records': group_records})
+        return render(request, 'home.html', {'records': records, 'group_records': group_records, 'sender_records': sender_records})
     
 
 
@@ -147,7 +148,6 @@ def  add_group_record(request):
         return redirect('home')
     
     
-    
 def update_group_record(request, pk):
     
     if request.user.is_authenticated:
@@ -167,6 +167,67 @@ def update_group_record(request, pk):
         messages.success(request, "Login First...")
         return redirect('home')
     
+    
 def sender_record(request, pk):
-    pass
+    if request.user.is_authenticated:
+            
+        #delete records
+        sender_record = Sender.objects.get(id=pk)
+        return render(request, 'sender.html', {'sender_record':sender_record})
+    
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home')
+    
+
+def  delete_sender_record(request, pk):
+    if request.user.is_authenticated:
+        
+        #delete records
+        delete_sender_record = Sender.objects.get(id=pk)
+        delete_sender_record.delete()
+        messages.success(request, "Group Deleted...")
+        return redirect('home')
+        
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home')
+    
+    
+def  add_sender_record(request):
+    if request.user.is_authenticated:
+        
+        form = AddSenderForm(request.POST or None)
+        
+        if request.method == "POST":
+            if form.is_valid():
+                add_sneder_record = form.save()
+                messages.success(request, "New Sender Created...")
+                return redirect('home')
+        
+        return render(request, 'add_sender_record.html', {'form':form})
+        
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home')
+    
+    
+def update_sender_record(request, pk):
+    
+    if request.user.is_authenticated:
+            
+        #delete records
+        current_group = Sender.objects.get(id=pk)
+        form = AddSenderForm(request.POST or None, instance=current_group)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sender Updated...")
+            return redirect('home')
+        
+        return render(request, 'update_sender_record.html', {'form':form})
+    
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home')
             

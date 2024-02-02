@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Record, Group_Record
+from .models import Record, Group_Record, Sender
 
 # Add Record Form
 
@@ -24,4 +24,13 @@ class AddGroupForm(forms.ModelForm):
     class Meta:
         model = Group_Record
         exclude = ("User", )
+        
+class AddSenderForm(forms.ModelForm):
+    phone_number_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone_ID",  "class": "form-control"}), label="")
+    access_token = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Token",  "class": "form-control"}), label="")
+    message = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Note",  "class": "form-control"}), label="")
+    class Meta:
+        model = Sender
+        exclude = ("User", )
+    
     

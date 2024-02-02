@@ -21,7 +21,6 @@ class Sender(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
 class Communication_Record(models.Model):
-    
     sender_info = models.ForeignKey(Sender, on_delete=models.CASCADE)
     contact_id = models.ForeignKey(Record, on_delete=models.CASCADE)
     message_id = models.CharField(max_length=100)

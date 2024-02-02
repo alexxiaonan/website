@@ -66,6 +66,35 @@
     </tbody>
   </table>
 
+<h1>sender List</h1>
+
+  <table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+          <th scope="col"> Sender Name</th>
+          <th scope="col">Sender number</th>
+        </tr>
+      </thead>
+    <tbody>
+          {%if sender_records  %}
+  
+              {% for sender_record in sender_records %}
+              <tr>
+      
+                <td><a href="{% url 'sender_record' sender_record.id%}">{{ sender_record.phone_number_id}}
+                </a></td>
+                
+                 <td>{% for sender in sender_record.all %}
+                  {{sender}} </br>
+                  {% endfor %}
+                </td>
+  
+  
+              {% endfor %}
+          {% endif %}
+      </tbody>
+    </table>
+
 
 
 {% else %}

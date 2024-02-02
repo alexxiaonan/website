@@ -35,4 +35,7 @@ urlpatterns = [
     path('update_group_record/<int:pk>', views.update_group_record, name='update_group_record'),
     
     path('sender_record/<int:pk>', views.sender_record, name='sender_record'),
+    path('delete_sender_record/<int:pk>', views.delete_sender_record, name='delete_sender_record'),
+    path('add_sender_record/', views.add_sender_record, name='add_sender_record'),
+    path('update_sender_record/<int:pk>', views.update_sender_record, name='update_sender_record'),
 ]
