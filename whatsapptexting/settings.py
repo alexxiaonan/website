@@ -1,3 +1,4 @@
+
 """
 Django settings for whatsapptexting project.
 
@@ -11,6 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import mysql.connector
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-m@%84alef&%fvdp0h8l@06put@bsf5#csosyj331y#mco9(+5h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '34.129.25.36']
 
 
 # Application definition
@@ -79,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':  'textingdb',
         'USER': 'root',
-        'PASSWORD': 'xiao315341583',
+        'PASSWORD': 'xiao315341583A!',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -121,6 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
