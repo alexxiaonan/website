@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-m@%84alef&%fvdp0h8l@06put@bsf5#csosyj331y#mco9(+5h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '34.129.25.36']
+ALLOWED_HOSTS = ['localhost', '34.129.25.36', 'texting.alexxhometest.com', '0.0.0.0']
 
 
 # Application definition
@@ -131,3 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+WHATSAPP_URL ='https://graph.facebook.com/v18.0/248197898365415/messages'
+WHATSAPP_TOKEN = 'Bearer EAAO1oqsZAGHUBO9rlK0ZCqwTDvkzPUin7BEYg6ljAAHz5tZCNceWVLegGjyx6zDvZBFzUitzZChAzQ65fzPnBKZB8mjeInJHh3YQGDGYBcEnN9X2HvPqRSnLfu8EQ52I9bQUbOyW4lCB67ZCNu0J7dHxaLdm1Du8ZAUX16hhQ6OzsMWbOLEmNpW8B6UnrQePgFjphNOV4ZAU0B6p5gxYD0nwZD'
