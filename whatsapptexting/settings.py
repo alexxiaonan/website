@@ -28,8 +28,12 @@ SECRET_KEY = 'django-insecure-m@%84alef&%fvdp0h8l@06put@bsf5#csosyj331y#mco9(+5h
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['localhost','127.0.0.1', '34.129.25.36']
+#  这里的这几个都需要改回来
+#<<<<<<< HEAD
+#ALLOWED_HOSTS = ['localhost','127.0.0.1', '34.129.25.36']
+#=======
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '34.129.25.36', 'texting.alexxhometest.com', '0.0.0.0']
+#>>>>>>> c2398958351fe763754d386c87f27f3b629303a1
 
 
 # Application definition
@@ -83,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':  'textingdb',
         'USER': 'root',
-        'PASSWORD': 'xiao315341583A!',
+        'PASSWORD': 'xiao315341583',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -133,3 +137,7 @@ MEDIA_URL = '/uploads/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+WHATSAPP_URL ='https://graph.facebook.com/v18.0/248197898365415/messages'
+WHATSAPP_TOKEN = 'Bearer EAAO1oqsZAGHUBO94TDXju2TUoC2g17vL2zzyMBqz7ZAh4DkCY4R0aUhBivyPaZBHrUw0j2fWzZAfDA557wLhfJ18powpcv2YVLYH5Ouy3Trza2ksVkBK3ZBedyozsxA7yKv4Cn7KxiWkcT8ZAAIDeQOROHS4oMNWGlVMoVn7t3bCZABZBrE5cw2OtOEUubc1BqpHWIre0dO6ZAaVJirdVD74ZD'

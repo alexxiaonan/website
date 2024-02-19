@@ -1,12 +1,12 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Record, Group_Record, Sender
+from django.forms import ModelForm
+from .models import Record, Group_Record, Sender, Communication_Record, Group_Communication_Record
 
 # Add Record Form
 
 class AddRecordForm(forms.ModelForm):
-    contact_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Contact ID",  "class": "form-control"}), label="")
     first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "First Name",  "class": "form-control"}), label="")
     last_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Last Name",  "class": "form-control"}), label="")
     phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone Number",  "class": "form-control"}), label="")
@@ -28,9 +28,27 @@ class AddGroupForm(forms.ModelForm):
 class AddSenderForm(forms.ModelForm):
     phone_number_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone_ID",  "class": "form-control"}), label="")
     access_token = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Token",  "class": "form-control"}), label="")
-    message = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Note",  "class": "form-control"}), label="")
     class Meta:
         model = Sender
         exclude = ("User", )
+        
+class ChatMessageForm(forms.ModelForm):
+    sender = forms.ModelChoiceField(required=True, queryset=Sender.objects)
+    contact = forms.ModelChoiceField(required=True, queryset=Record.objects)
+    message_text = forms.CharField(widget=forms.Textarea(attrs={"rows":3, "placeholder": "Type Message"}))
     
+    
+    class Meta:
+        model = Communication_Record
+        fields = ['message_text', ]
+
+class ChatGroupMessageForm(forms.ModelForm):
+    sender = forms.ModelChoiceField(required=True, queryset=Sender.objects)
+    group = forms.ModelChoiceField(required=True, queryset=Group_Record.objects)
+    group_message_text = forms.CharField(widget=forms.Textarea(attrs={"rows":3, "placeholder": "Type Message"}))
+    
+    
+    class Meta:
+        model = Group_Communication_Record
+        fields = ['group_message_text', ]
     

@@ -22,5 +22,43 @@
 
 <a href="{% url 'delete_customer_record' customer_record.id %}" class="btn btn-danger">Delete</a>
 
+</br>
+</br>
+</br>
+
+
+<div class="card">
+  <div class="card-header">
+      <Strong>Messages:</strong>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+
+    
+    {% for chat in chats %}
+    
+    {% if chat.contact.id == customer_record.id %} 
+
+      <Strong>Sender: </strong>{{chat.sender}}</br>
+      <Strong>Receiver: </strong>{{chat.contact}}</br>
+      <Strong>time: </strong>{{chat.sent_datetime}}</br>
+      <Strong>status: </strong>{{chat.status}}</br>
+      <Strong>Message: </strong>{{chat.message_text}}</br>
+      </br>
+    {% endif %}
+    {% endfor %}
+
+    
+
+    
+  </p>
+</div>
+</div>
+
+</br></br>
+
+
+
+
 {% endblock %}
 

@@ -23,6 +23,8 @@ urlpatterns = [
     path('', views.home, name='home'),
     #path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
+    # change the uil by add infornt
+    path('80e9f013-5924-4da0-aa6f-21d552f9e8ac', views.whatsAppWebhook, name='whatsapp-webhook'),
     
     path('record/<int:pk>', views.customer_record, name='record'),
     path('delete_customer_record/<int:pk>', views.delete_customer_record, name='delete_customer_record'),
@@ -38,4 +40,8 @@ urlpatterns = [
     path('delete_sender_record/<int:pk>', views.delete_sender_record, name='delete_sender_record'),
     path('add_sender_record/', views.add_sender_record, name='add_sender_record'),
     path('update_sender_record/<int:pk>', views.update_sender_record, name='update_sender_record'),
+    
+    path('sendMessageIndividual', views.sendMessageIndividual, name='sendMessageIndividual'),
+    
+    path('sendGroupMessageIndividual', views.sendGroupMessageIndividual, name='sendGroupMessageIndividual'),
 ]
