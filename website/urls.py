@@ -26,6 +26,9 @@ urlpatterns = [
     # change the uil by add infornt
     path('80e9f013-5924-4da0-aa6f-21d552f9e8ac', views.whatsAppWebhook, name='whatsapp-webhook'),
     
+    # https://texting.alexxhometest.com/80e9f013-5924-4da0-aa6f-21d552f9e8ac
+    # token: 4eee0753-2969-4c14-9bc7-387234169bc5
+
     path('record/<int:pk>', views.customer_record, name='record'),
     path('delete_customer_record/<int:pk>', views.delete_customer_record, name='delete_customer_record'),
     path('add_customer_record/', views.add_customer_record, name='add_customer_record'),

@@ -44,7 +44,7 @@ def sendWAMessage(phoneNumber, message, token):
 @csrf_exempt
 def whatsAppWebhook(request):
     if request.method =='GET':
-        VERIFY_TOKEN = ''
+        VERIFY_TOKEN = '4eee0753-2969-4c14-9bc7-387234169bc5'
         mode = request.GET['hub.mode']
         token = request.GET['hub.verify_token']
         challenge = request.GET['hub.challenge']
