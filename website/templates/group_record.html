@@ -30,5 +30,37 @@
 <a href="{% url 'update_group_record' group_member_record.id %}" class="btn btn-primary">Update</a>
 
 <a href="{% url 'delete_group_record' group_member_record.id %}" class="btn btn-danger">Delete</a>
+</br>
+</br>
+</br>
+
+
+<div class="card">
+  <div class="card-header">
+      <Strong>Messages:</strong>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+
+
+    {% for groupchat in group_chats %}
+    
+    {% if groupchat.group.id == group_member_record.id %}
+
+      <Strong>Sender: </strong>{{groupchat.sender}}</br>
+      <Strong>time: </strong>{{groupchat.group_sent_datetime}}</br>
+      <Strong>Message: </strong>{{groupchat.group_message_text}}</br>
+
+    {% endif %}
+
+    </br>
+    {% endfor %}
+
+  </p>
+</div>
+</div>
+
+</br></br>
+
 
 {% endblock %}
