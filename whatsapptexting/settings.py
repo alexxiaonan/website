@@ -32,7 +32,7 @@ DEBUG = True
 #<<<<<<< HEAD
 # ALLOWED_HOSTS = ['localhost','127.0.0.1', '34.129.239.143']
 #=======
-ALLOWED_HOSTS = ['texting.alexxhometest.com', '34.129.239.143']
+ALLOWED_HOSTS = ['texting.alexxhometest.com', '34.129.239.143','0.0.0.0']
 #>>>>>>> c2398958351fe763754d386c87f27f3b629303a1
 
 

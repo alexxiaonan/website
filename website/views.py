@@ -18,7 +18,10 @@ def to_list(*args):
 def sendWAMessage(phoneNumber, message, token):
     string = 'Bearer '
     full_token = string + token
-    headers = {"Authorization": full_token}
+   
+    string_test = 'Bearer EAAO1oqsZAGHUBO6Xz9pEDFmD0MfjJW3NyyiEevkHln0f0nVXK22wzp7v7VaJoqVZBIZAOcJY1tJMZCxXTZCG94pa2jJrhYFtZBWB48SMlFXNgfRlYHF42NKdHjMZB38T44lPJM1J6Odc4OoZBTa05a3ETdR9X95nnYu2IAFZBGIv8O46m8MaBySjt14yjvyDpHc2KNHVkvYkz1eLTOjTFWBwZD'
+    
+    headers = {"Authorization": string_test}
     payload = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -54,12 +57,51 @@ def whatsAppWebhook(request):
         else:
             return HttpResponse('error', status=403)
     
-    if  request.method == 'POST':
+    if request.method =='POST':
         data = json.loads(request.body)
-        
+        print(data)
+        if 'object' in data and 'entry' in data:
+             if data['object'] == 'whatsapp_business_account':
+                 try:
+                     for entry in data['entry']:
+                         phoneNumber = entry['changes'][0]['value']['metadata']['display_phone_number']
+                         print(phoneNumber)
+                         phoneID = entry['changes'][0]['value']['metadata']['phone_number_id']
+                         profileName = entry['changes'][0]['value']['contacts'][0]['profile']['name']
+                         print(profileName)
+                         whatsAppID = entry['changes'][0]['value']['contacts'][0]['wa_id']
+                         fromID = entry['changes'][0]['value']['messages'][0]['from']
+                         print(fromID)
+                         messageID = entry['changes'][0]['value']['messages'][0]['id']
+                         timestamp = entry['changes'][0]['value']['messages'][0]['timestamp']
+                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
+                         
+                         print(text)
+
+                         phone = "+61447284449"
+                         # message = 'RE: {} was received'.format(text)
+                         # message = '2'
+                         # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
+                         # ans = sendWAMessage(phone, message, token)
+                         string_test = 'Bearer EAAO1oqsZAGHUBO6Xz9pEDFmD0MfjJW3NyyiEevkHln0f0nVXK22wzp7v7VaJoqVZBIZAOcJY1tJMZCxXTZCG94pa2jJrhYFtZBWB48SMlFXNgfRlYHF42NKdHjMZB38T44lPJM1J6Odc4OoZBTa05a3ETdR9X95nnYu2IAFZBGIv8O46m8MaBySjt14yjvyDpHc2KNHVkvYkz1eLTOjTFWBwZD'
+    
+                         headers = {"Authorization": string_test}
+                         payload = {
+                                  "messaging_product": "whatsapp",
+                                  "recipient_type": "individual",
+                                  "to": phone,
+                                  "type": "text",
+                                  "text": {"body":text}  
+                                   }
+                         respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
+                         ans = respone.json()
+                         print(ans)
+                 except:
+                     pass
+
         return HttpResponse('success', status=200)
     
-    
+   
 def home(request):
     
     # load data records
