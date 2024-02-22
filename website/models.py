@@ -7,11 +7,12 @@ class Record(models.Model):
     contact_id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=50)
     
     def __str__(self):
         return (f"{self.first_name}{self.last_name}")
+
 
 class Sender(models.Model):
     phone_number_id = models.CharField(max_length=100)

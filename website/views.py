@@ -4,15 +4,30 @@ from django.contrib import messages
 from .models import Record, Communication_Record, Group_Record, Sender, Group_Communication_Record
 from .forms import AddRecordForm, AddGroupForm, AddSenderForm, ChatMessageForm, ChatGroupMessageForm
 from django import template
-import json,random, string, time, requests
+import json,random, string, time, requests, re
+import phonenumbers
+from phonenumbers.phonenumberutil import number_type
+from email_validator import validate_email, EmailNotValidError
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-register = template.Library()
-@register.simple_tag
-def to_list(*args):
-    return args
+
+def validate_au_mobile(number):
+    try:
+        parsed_number = phonenumbers.parse(number, "AU")
+        return number_type(parsed_number) == phonenumbers.PhoneNumberType.MOBILE
+    except phonenumbers.phonenumberutil.NumberFormatException:
+        return False
+
+def is_email_valid(email):
+    try:
+        emailinfo = validate_email(email, check_deliverability=False)
+        email = emailinfo.normalized
+        return True
+    except EmailNotValidError as e:
+        print(str(e))
+        return False
 
 # Create your views here.
 def sendWAMessage(phoneNumber, message, token):
@@ -168,11 +183,48 @@ def  add_customer_record(request):
     if request.user.is_authenticated:
         
         form = AddRecordForm(request.POST or None)
+
         if request.method == "POST":
+            data = request.POST.copy()
+            _muatble = data._mutable
+            data._mutable = True
+            
+            phone = request.POST.get('phone')
+            phone_str=str(phone)
+            
+            if len(phone_str) == 10 and phone_str[0] == '0':
+                new_phone_str =  '+61' + phone_str[1:] 
+                print(new_phone_str)
+                data['phone'] = new_phone_str
+                data._mutable = _muatble
+            elif len(phone_str) == 9:
+                new_phone_str =  '+61' + phone_str 
+                print(new_phone_str)
+                data['phone'] = new_phone_str
+                data._mutable = _muatble
+        
+            form = AddRecordForm(data)
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            verify_phone_exists = Record.objects.filter(phone=str(phone)).exists()
+            
             if form.is_valid():
-                add_customer_record = form.save()
-                messages.success(request, "New Customer Infor Added...")
-                return redirect('home')
+                is_au_mobile = validate_au_mobile(phone)
+                is_email_address_valid = is_email_valid(email)
+                #print(is_au_mobile, is_email_address_valid)
+                
+                if is_au_mobile == True and is_email_address_valid == True and verify_phone_exists == False:
+                    add_customer_record = form.save()
+                    messages.success(request, "New Customer Infor Added...")
+                    return redirect('home')
+                elif verify_phone_exists:
+                    messages.success(request, "Phone Number Existed in Database")
+                elif is_au_mobile == False:
+                    messages.success(request, "Incorrect Phone Number")
+                elif is_email_address_valid == False:
+                    messages.success(request, "Incorrect Email Address")
+                else:
+                    messages.success(request, "Incorrect Phone Number and Email Address")
         
         return render(request, 'add_customer_record.html', {'form':form})
         
@@ -191,9 +243,42 @@ def update_customer_record(request, pk):
         form = AddRecordForm(request.POST or None, instance=current_customer)
         
         if form.is_valid():
-            form.save()
-            messages.success(request, "Record Updated...")
-            return redirect('home')
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            
+            #print(phone, email)
+             
+            is_au_mobile = validate_au_mobile(phone)
+            is_email_address_valid = is_email_valid(email)
+            verify_phone_exists = Record.objects.filter(phone=str(phone)).exists()
+            
+            if is_au_mobile == True and is_email_address_valid == True and verify_phone_exists == False:
+                updateform = form.save(commit=False)
+                phone_str=str(updateform.phone)
+                if len(phone_str) == 10 and phone_str[0] == '0':
+                    new_phone_str =  '+61' + phone_str[1:] 
+                    #print(new_phone_str)
+                    updateform.phone = new_phone_str
+                elif len(phone_str) == 9:
+                    new_phone_str =  '+61' + phone_str 
+                    #print(new_phone_str)
+                    updateform.phone = new_phone_str
+                
+                if Record.objects.filter(phone=str(updateform.phone)).exists() == False:
+                    updateform.save()
+                    messages.success(request, "Record Updated...")
+                    return redirect('home')
+                else:
+                    messages.success(request, "Phone Number Existed in Database")
+                    
+            elif verify_phone_exists:
+                    messages.success(request, "Phone Number Existed in Database")
+            elif is_au_mobile == False:
+                messages.success(request, "Incorrect Phone Number")
+            elif is_email_address_valid == False:
+                messages.success(request, "Incorrect Email Address")
+            else:
+                messages.success(request, "Incorrect Phone Number and Email Address")
         
         return render(request, 'update_customer_record.html', {'form':form})
     
@@ -400,7 +485,6 @@ def sendGroupMessageIndividual(request):
 
                     if ans == True:
                         individual_message.status = 'sent'
-
                         individual_message.save()
                    
                     
