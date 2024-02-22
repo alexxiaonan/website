@@ -9,7 +9,7 @@ import phonenumbers
 from phonenumbers import carrier
 from phonenumbers.phonenumberutil import number_type
 from email_validator import validate_email, EmailNotValidError
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
@@ -53,20 +53,13 @@ def sendWAMessage(phoneNumber, message, token):
             "text": {"body":message}  
                }
     respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
-    ans = respone.json()
-    print(ans)
+    # ans = respone.json()
     
-    dict_ans=json.dumps(ans)
-    
-    key = 'error'
-    if key in dict_ans:
-        print('error found')
-        return False
-    else:
-        print('no error')
+    if respone.status_code == 200:
         return True
-    
-
+    else:
+        return False
+   
 @csrf_exempt
 def whatsAppWebhook(request):
     if request.method =='GET':
@@ -446,14 +439,17 @@ def update_sender_record(request, pk):
             
             update_sender = form.save(commit=False)
             
-            verify_sender_exists = Sender.objects.filter(phone_number_id=str(update_sender.phone_number_id)).exists()
+            #verify_sender_exists = Sender.objects.filter(phone_number_id=str(update_sender.phone_number_id)).exists()
             
-            if verify_sender_exists == False:
-                update_sender.save()
-                messages.success(request, "Sender Updated...")
-                return redirect('home')
-            else:
-                messages.success(request, "Sender Exist...")
+            #if verify_sender_exists == False:
+                #update_sender.save()
+                #messages.success(request, "Sender Updated...")
+                #return redirect('home')
+            #else:
+                #messages.success(request, "Sender Exist...")
+            update_sender.save()
+            messages.success(request, "Sender Updated...")
+            return redirect('home')
         
         return render(request, 'update_sender_record.html', {'form':form})
     
