@@ -6,6 +6,7 @@ from .forms import AddRecordForm, AddGroupForm, AddSenderForm, ChatMessageForm, 
 from django import template
 import json,random, string, time, requests, re
 import phonenumbers
+from phonenumbers import carrier
 from phonenumbers.phonenumberutil import number_type
 from email_validator import validate_email, EmailNotValidError
 from django.http import HttpResponse, JsonResponse
@@ -19,6 +20,14 @@ def validate_au_mobile(number):
         return number_type(parsed_number) == phonenumbers.PhoneNumberType.MOBILE
     except phonenumbers.phonenumberutil.NumberFormatException:
         return False
+
+def validate_phone(number):
+    try:
+        parsed_number = phonenumbers.parse(number)
+        return carrier._is_mobile(number_type(parsed_number))
+    except phonenumbers.phonenumberutil.NumberFormatException:
+        return False
+
 
 def is_email_valid(email):
     try:
@@ -75,48 +84,56 @@ def whatsAppWebhook(request):
         data = json.loads(request.body)
         print(data)
         if 'object' in data and 'entry' in data:
-             if data['object'] == 'whatsapp_business_account':
-                 try:
-                     for entry in data['entry']:
-                         phoneNumber = entry['changes'][0]['value']['metadata']['display_phone_number']
-                         print(phoneNumber)
-                         phoneID = entry['changes'][0]['value']['metadata']['phone_number_id']
-                         profileName = entry['changes'][0]['value']['contacts'][0]['profile']['name']
-                         print(profileName)
-                         whatsAppID = entry['changes'][0]['value']['contacts'][0]['wa_id']
-                         fromID = entry['changes'][0]['value']['messages'][0]['from']
-                         print(fromID)
-                         messageID = entry['changes'][0]['value']['messages'][0]['id']
-                         timestamp = entry['changes'][0]['value']['messages'][0]['timestamp']
-                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
+            if data['object'] == 'whatsapp_business_account':
+                try:
+                    for entry in data['entry']:
+                        phoneNumber = entry['changes'][0]['value']['metadata']['display_phone_number']
+                        print(phoneNumber)
+                        phoneID = entry['changes'][0]['value']['metadata']['phone_number_id']
+                        profileName = entry['changes'][0]['value']['contacts'][0]['profile']['name']
+                        print(profileName)
+                        whatsAppID = entry['changes'][0]['value']['contacts'][0]['wa_id']
+                        fromID = entry['changes'][0]['value']['messages'][0]['from']
+                        print(fromID)
+                        messageID = entry['changes'][0]['value']['messages'][0]['id']
+                        timestamp = entry['changes'][0]['value']['messages'][0]['timestamp']
+                        text = entry['changes'][0]['value']['messages'][0]['text']['body']
                          
-                         print(text)
-
+                        print(text)
+                        if Record.objects.filter(phone=str(fromID)).exists():
+                            message_sender = Record.objects.get(Record.objects.all(phone=str(fromID)))
+                            message_receiver = Sender.objects.get(Record.objects.all(phone_number_id=str(phoneID)))
+                            received_message = Communication_Record.objects.create(
+                                                                sender = message_sender,
+                                                                contact = message_receiver,
+                                                                message_text = text,
+                                                                status = 'recevied'
+                                                                )
+                            received_message.save()
+                            
                         
                         
-                        
-                         phone = "+61447284449"
-                         # message = 'RE: {} was received'.format(text)
-                         # message = '2'
-                         # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
-                         # ans = sendWAMessage(phone, message, token)
-                         string_test = 'Bearer EAAO1oqsZAGHUBOzddh29L9ZBNbPYwfdSdBAuQi162H59oyth5fkvdKKJqz9K8aNjonxmP1ZA38cJfVzQzNZA4OqV0vUiPcR7lEM1z8O78BP4EeaRfGb8PIFcXK9dBoYoMzAme8tWpMOUZCkj59hTLLFyStPfOwEQcPrBck22ZAbVMYjCpZAQYpoyjFxsBRCinhzQN05WlSMNRthq7AYSBnC'
+                        # message = 'RE: {} was received'.format(text)
+                        # message = '2'
+                        # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
+                        # ans = sendWAMessage(phone, message, token)
+                        string_test = 'Bearer EAAO1oqsZAGHUBOzddh29L9ZBNbPYwfdSdBAuQi162H59oyth5fkvdKKJqz9K8aNjonxmP1ZA38cJfVzQzNZA4OqV0vUiPcR7lEM1z8O78BP4EeaRfGb8PIFcXK9dBoYoMzAme8tWpMOUZCkj59hTLLFyStPfOwEQcPrBck22ZAbVMYjCpZAQYpoyjFxsBRCinhzQN05WlSMNRthq7AYSBnC'
     
-                         headers = {"Authorization": string_test}
-                         payload = {
+                        headers = {"Authorization": string_test}
+                        payload = {
                                   "messaging_product": "whatsapp",
                                   "recipient_type": "individual",
-                                  "to": phone,
+                                  "to": fromID,
                                   "type": "text",
                                   "text": {"body":'RE: {} was received {}'.format(text,fromID)}  
                                    }
-                         respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
-                         ans = respone.json()
-                         print(ans)
+                        respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
+                        ans = respone.json()
+                        print(ans)
 
 
-                 except:
-                     pass
+                except:
+                    pass
 
         return HttpResponse('success', status=200)
     
@@ -261,7 +278,9 @@ def update_customer_record(request, pk):
             verify_phone_exists = Record.objects.filter(phone=str(phone)).exists()
             
             if is_au_mobile == True and is_email_address_valid == True and verify_phone_exists == False:
+                
                 updateform = form.save(commit=False)
+                
                 phone_str=str(updateform.phone)
                 if len(phone_str) == 10 and phone_str[0] == '0':
                     new_phone_str =  '+61' + phone_str[1:] 
@@ -391,11 +410,22 @@ def  add_sender_record(request):
         
         form = AddSenderForm(request.POST or None)
         
+        
         if request.method == "POST":
             if form.is_valid():
-                add_sneder_record = form.save()
-                messages.success(request, "New Sender Created...")
-                return redirect('home')
+                
+                phone_number_id = request.POST.get('phone_number_id')
+                print(phone_number_id)
+                #is_mobile = validate_phone(phone_number_id)
+                verify_sender_exists = Sender.objects.filter(phone_number_id=str(phone_number_id)).exists()
+                #print(is_mobile)
+                #if is_mobile == True and verify_sender_exists == False:
+                if verify_sender_exists == False:
+                    add_sneder_record = form.save()
+                    messages.success(request, "New Sender Created...")
+                    return redirect('home')
+                else:
+                    messages.success(request, "Sender Exist...")
         
         return render(request, 'add_sender_record.html', {'form':form})
         
@@ -413,9 +443,17 @@ def update_sender_record(request, pk):
         form = AddSenderForm(request.POST or None, instance=current_group)
         
         if form.is_valid():
-            form.save()
-            messages.success(request, "Sender Updated...")
-            return redirect('home')
+            
+            update_sender = form.save(commit=False)
+            
+            verify_sender_exists = Sender.objects.filter(phone_number_id=str(update_sender.phone_number_id)).exists()
+            
+            if verify_sender_exists == False:
+                update_sender.save()
+                messages.success(request, "Sender Updated...")
+                return redirect('home')
+            else:
+                messages.success(request, "Sender Exist...")
         
         return render(request, 'update_sender_record.html', {'form':form})
     

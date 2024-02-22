@@ -37,7 +37,7 @@
     
     {% for chat in chats %}
     
-    {% if chat.contact.id == customer_record.id %} 
+    {% if chat.contact.id == customer_record.id or chat.sender.id == customer_record.id %} 
 
       <Strong>Sender: </strong>{{chat.sender}}</br>
       <Strong>Receiver: </strong>{{chat.contact}}</br>

@@ -9,16 +9,17 @@ from .models import Record, Group_Record, Sender, Communication_Record, Group_Co
 class AddRecordForm(forms.ModelForm):
     first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "First Name",  "class": "form-control"}), label="")
     last_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Last Name",  "class": "form-control"}), label="")
-    phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone Number",  "class": "form-control"}), label="")
-    email = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Email Address",  "class": "form-control"}), label="")
+    phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone Number",  "class": "form-control", "type":"number"}), label="")
+    email = forms.CharField(widget=forms.widgets.TextInput(attrs={"placeholder": "Email Address",  "class": "form-control"}), label="")
     
     class Meta:
         model = Record
         exclude = ("User", )
+
         
 class AddGroupForm(forms.ModelForm):
     
-    group_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Group Name",  "class": "form-control"}), label="")
+    group_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Group Name",  "class": "form-control", "type":"number"}), label="")
     user = forms.ModelMultipleChoiceField(required=True, queryset=Record.objects, widget=forms.CheckboxSelectMultiple())
     
     class Meta:
@@ -26,7 +27,7 @@ class AddGroupForm(forms.ModelForm):
         exclude = ("User", )
         
 class AddSenderForm(forms.ModelForm):
-    phone_number_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone_ID",  "class": "form-control"}), label="")
+    phone_number_id = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Phone_ID",  "class": "form-control", "type":"number"}), label="")
     access_token = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Token",  "class": "form-control"}), label="")
     class Meta:
         model = Sender
