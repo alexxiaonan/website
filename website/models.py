@@ -48,6 +48,7 @@ class Group_Record(models.Model):
 class Group_Communication_Record(models.Model):
     sender = models.ForeignKey(Sender, on_delete=models.CASCADE)
     group = models.ForeignKey(Group_Record, on_delete=models.CASCADE)
+    group_status = models.CharField(max_length=400, default='unknown')
     group_message_text = models.TextField()
     group_sent_datetime = models.DateTimeField(auto_now_add=True)
     

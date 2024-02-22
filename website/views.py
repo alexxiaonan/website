@@ -512,7 +512,7 @@ def sendGroupMessageIndividual(request):
                 print(new_group_message.group_message_text)
                 
                
-                
+                group_status = []
                 for individual_object in new_group_message.group.user.all():
                     individual_message = Communication_Record.objects.create(
                     sender = new_group_message.sender,
@@ -527,14 +527,16 @@ def sendGroupMessageIndividual(request):
 
                     if ans == True:
                         individual_message.status = 'sent'
+                        group_status.append([phone, individual_message.status])
                         individual_message.save()
                    
                     
                     else:
+                        group_status.append([phone, individual_message.status])
                         individual_message.status = 'error'
                         individual_message.save()
                   
-                    
+                new_group_message.group_status = group_status
                 new_group_message.save()
                
                 messages.success(request, "New Group Message send...")
