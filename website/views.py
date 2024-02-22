@@ -93,6 +93,8 @@ def whatsAppWebhook(request):
                          print(text)
 
                         
+                        
+                        
                          phone = "+61447284449"
                          # message = 'RE: {} was received'.format(text)
                          # message = '2'
@@ -106,7 +108,7 @@ def whatsAppWebhook(request):
                                   "recipient_type": "individual",
                                   "to": phone,
                                   "type": "text",
-                                  "text": {"body":text}  
+                                  "text": {"body":'RE: {} was received {}'.format(text,fromID)}  
                                    }
                          respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
                          ans = respone.json()
