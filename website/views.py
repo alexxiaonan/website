@@ -88,28 +88,28 @@ def whatsAppWebhook(request):
                 try:
                     for entry in data['entry']:
                         phoneNumber = entry['changes'][0]['value']['metadata']['display_phone_number']
-                        print(phoneNumber)
+                        # print(phoneNumber)
                         phoneID = entry['changes'][0]['value']['metadata']['phone_number_id']
+                        # print(phoneID,'look here')
                         profileName = entry['changes'][0]['value']['contacts'][0]['profile']['name']
-                        print(profileName)
                         whatsAppID = entry['changes'][0]['value']['contacts'][0]['wa_id']
                         fromID = entry['changes'][0]['value']['messages'][0]['from']
-                        print(fromID)
+                        # print(fromID)
                         messageID = entry['changes'][0]['value']['messages'][0]['id']
                         timestamp = entry['changes'][0]['value']['messages'][0]['timestamp']
                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
-                         
-                        print(text)
-                        if Record.objects.filter(phone=str(fromID)).exists():
-                            message_sender = Record.objects.get(Record.objects.all(phone=str(fromID)))
-                            message_receiver = Sender.objects.get(Record.objects.all(phone_number_id=str(phoneID)))
-                            received_message = Communication_Record.objects.create(
-                                                                sender = message_sender,
-                                                                contact = message_receiver,
-                                                                message_text = text,
-                                                                status = 'recevied'
-                                                                )
+                        # print(text)
+                        print(Record.objects.filter(phone=str(fromID)).exists())
+                        if Record.objects.filter(phone=str(fromID)).exists()== True:
+                            print('yes')
+                            message_sender = Record.objects.get(phone=str(fromID))
+                            message_receiver = Sender.objects.get(phone_number_id=str(phoneNumber))
+                            print('look here')
+                            print(message_sender,message_receiver)
+                            received_message = Communication_Record.objects.create(sender=message_receiver,contact=message_sender,message_text=text,status='received')
+                            print('received_message')
                             received_message.save()
+                            print('yes')
                             
                         
                         
@@ -117,15 +117,15 @@ def whatsAppWebhook(request):
                         # message = '2'
                         # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
                         # ans = sendWAMessage(phone, message, token)
-                        string_test = 'Bearer EAAO1oqsZAGHUBOzddh29L9ZBNbPYwfdSdBAuQi162H59oyth5fkvdKKJqz9K8aNjonxmP1ZA38cJfVzQzNZA4OqV0vUiPcR7lEM1z8O78BP4EeaRfGb8PIFcXK9dBoYoMzAme8tWpMOUZCkj59hTLLFyStPfOwEQcPrBck22ZAbVMYjCpZAQYpoyjFxsBRCinhzQN05WlSMNRthq7AYSBnC'
+                        string_test = 'Bearer EAAO1oqsZAGHUBO99iTLEEzpCEqdKdfF3qOpyEGS84MTuDFt8HnYqHAbulk4Pply9AaWfDDGxRtlJSLJslhyrN6GqB8SRT1L9sLaNEPQgYu3l9wZBvrkJKLlxLI0bU0FctGFeZBJNoVUMIwJTPJZAJXvrSKB3zjyYRocxDBQqXUhz0wtH4YYcVvJIX7teSMt4e3YB7e7V0QyhaoXK0SAZD'
     
                         headers = {"Authorization": string_test}
                         payload = {
                                   "messaging_product": "whatsapp",
                                   "recipient_type": "individual",
-                                  "to": fromID,
+                                  "to": str(fromID),
                                   "type": "text",
-                                  "text": {"body":'RE: {} was received {}'.format(text,fromID)}  
+                                  "text": {"body":'RE: {} was received {},{}'.format(text,fromID,phoneNumber)}  
                                    }
                         respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
                         ans = respone.json()
@@ -213,12 +213,12 @@ def  add_customer_record(request):
             phone_str=str(phone)
             
             if len(phone_str) == 10 and phone_str[0] == '0':
-                new_phone_str =  '+61' + phone_str[1:] 
+                new_phone_str =  '61' + phone_str[1:] 
                 print(new_phone_str)
                 data['phone'] = new_phone_str
                 data._mutable = _muatble
             elif len(phone_str) == 9:
-                new_phone_str =  '+61' + phone_str 
+                new_phone_str =  '61' + phone_str 
                 print(new_phone_str)
                 data['phone'] = new_phone_str
                 data._mutable = _muatble
@@ -283,11 +283,11 @@ def update_customer_record(request, pk):
                 
                 phone_str=str(updateform.phone)
                 if len(phone_str) == 10 and phone_str[0] == '0':
-                    new_phone_str =  '+61' + phone_str[1:] 
+                    new_phone_str =  '61' + phone_str[1:] 
                     #print(new_phone_str)
                     updateform.phone = new_phone_str
                 elif len(phone_str) == 9:
-                    new_phone_str =  '+61' + phone_str 
+                    new_phone_str =  '61' + phone_str 
                     #print(new_phone_str)
                     updateform.phone = new_phone_str
                 
