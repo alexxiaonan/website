@@ -92,6 +92,7 @@ def whatsAppWebhook(request):
                          
                          print(text)
 
+                        
                          phone = "+61447284449"
                          # message = 'RE: {} was received'.format(text)
                          # message = '2'
@@ -206,7 +207,7 @@ def  add_customer_record(request):
             form = AddRecordForm(data)
             phone = request.POST.get('phone')
             email = request.POST.get('email')
-            verify_phone_exists = Record.objects.filter(phone=str(phone)).exists()
+            verify_phone_exists = Record.objects.filter(phone=str(data['phone'])).exists()
             
             if form.is_valid():
                 is_au_mobile = validate_au_mobile(phone)
@@ -214,9 +215,14 @@ def  add_customer_record(request):
                 #print(is_au_mobile, is_email_address_valid)
                 
                 if is_au_mobile == True and is_email_address_valid == True and verify_phone_exists == False:
-                    add_customer_record = form.save()
-                    messages.success(request, "New Customer Infor Added...")
-                    return redirect('home')
+                    add_customer_record = form.save(commit=False)
+                    if Record.objects.filter(phone=str(add_customer_record.phone)).exists() == False:
+                        add_customer_record.save()
+                        messages.success(request, "New Customer Infor Added...")
+                        return redirect('home')
+                    else:
+                        messages.success(request, "Phone Number Existed in Database")
+                        
                 elif verify_phone_exists:
                     messages.success(request, "Phone Number Existed in Database")
                 elif is_au_mobile == False:
