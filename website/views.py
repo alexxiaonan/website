@@ -19,9 +19,8 @@ def sendWAMessage(phoneNumber, message, token):
     string = 'Bearer '
     full_token = string + token
    
-    string_test = 'Bearer EAAO1oqsZAGHUBO6Xz9pEDFmD0MfjJW3NyyiEevkHln0f0nVXK22wzp7v7VaJoqVZBIZAOcJY1tJMZCxXTZCG94pa2jJrhYFtZBWB48SMlFXNgfRlYHF42NKdHjMZB38T44lPJM1J6Odc4OoZBTa05a3ETdR9X95nnYu2IAFZBGIv8O46m8MaBySjt14yjvyDpHc2KNHVkvYkz1eLTOjTFWBwZD'
-    
-    headers = {"Authorization": string_test}
+  
+    headers = {"Authorization": full_token}
     payload = {
             "messaging_product": "whatsapp",
             "recipient_type": "individual",
@@ -83,7 +82,7 @@ def whatsAppWebhook(request):
                          # message = '2'
                          # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
                          # ans = sendWAMessage(phone, message, token)
-                         string_test = 'Bearer EAAO1oqsZAGHUBO6Xz9pEDFmD0MfjJW3NyyiEevkHln0f0nVXK22wzp7v7VaJoqVZBIZAOcJY1tJMZCxXTZCG94pa2jJrhYFtZBWB48SMlFXNgfRlYHF42NKdHjMZB38T44lPJM1J6Odc4OoZBTa05a3ETdR9X95nnYu2IAFZBGIv8O46m8MaBySjt14yjvyDpHc2KNHVkvYkz1eLTOjTFWBwZD'
+                         string_test = 'Bearer EAAO1oqsZAGHUBOzddh29L9ZBNbPYwfdSdBAuQi162H59oyth5fkvdKKJqz9K8aNjonxmP1ZA38cJfVzQzNZA4OqV0vUiPcR7lEM1z8O78BP4EeaRfGb8PIFcXK9dBoYoMzAme8tWpMOUZCkj59hTLLFyStPfOwEQcPrBck22ZAbVMYjCpZAQYpoyjFxsBRCinhzQN05WlSMNRthq7AYSBnC'
     
                          headers = {"Authorization": string_test}
                          payload = {
@@ -96,6 +95,8 @@ def whatsAppWebhook(request):
                          respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
                          ans = respone.json()
                          print(ans)
+
+
                  except:
                      pass
 
@@ -357,7 +358,8 @@ def sendMessageIndividual(request):
                     messages.success(request, "New Message send...")
                     return redirect('home')
                 else:
-                    # 这里要搞re-sent那个东西
+                    new_message.status = 'error'
+                    new_message.save()
                     messages.success(request, "Error...")
                     return redirect('home')
         
@@ -370,7 +372,6 @@ def sendMessageIndividual(request):
 def sendGroupMessageIndividual(request):
     
     form = ChatGroupMessageForm(request.POST or None)
-    #individual = ChatMessageForm(request.POST or None)
     
     if request.user.is_authenticated:
         
@@ -391,12 +392,24 @@ def sendGroupMessageIndividual(request):
                     contact = individual_object,
                     message_text = new_group_message.group_message_text,
                     )
-                    individual_message.save
+
+                    token = new_group_message.sender.access_token
+                    phone = individual_object.phone
+                    message = new_group_message.group_message_text
+                    ans = sendWAMessage(phone, message, token)
+
+                    if ans == True:
+                        individual_message.status = 'sent'
+
+                        individual_message.save()
+                   
+                    
+                    else:
+                        individual_message.status = 'error'
+                        individual_message.save()
+                  
                     
                 new_group_message.save()
-                
-                #records = new_group_message.group.user.all()
-              
                
                 messages.success(request, "New Group Message send...")
                 return redirect('home')
