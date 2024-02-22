@@ -29,6 +29,7 @@ class Communication_Record(models.Model):
     sender = models.ForeignKey(Sender, on_delete=models.CASCADE)
     contact = models.ForeignKey(Record, on_delete=models.CASCADE)
     message_id = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4, editable=False)
+    send_method = models.CharField(max_length=40, default='unknown')
     message_text = models.TextField()
     sent_datetime = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='unknown')
@@ -49,6 +50,7 @@ class Group_Communication_Record(models.Model):
     sender = models.ForeignKey(Sender, on_delete=models.CASCADE)
     group = models.ForeignKey(Group_Record, on_delete=models.CASCADE)
     group_status = models.CharField(max_length=400, default='unknown')
+    send_method = models.CharField(max_length=40, default='unknown')
     group_message_text = models.TextField()
     group_sent_datetime = models.DateTimeField(auto_now_add=True)
     

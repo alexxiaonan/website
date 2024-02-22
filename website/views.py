@@ -481,11 +481,13 @@ def sendMessageIndividual(request):
                 
                 if ans == True:
                     new_message.status = 'sent'
+                    new_message.send_method = 'individual messages'
                     new_message.save()
                     messages.success(request, "New Message send...")
                     return redirect('home')
                 else:
                     new_message.status = 'error'
+                    new_message.send_method = 'Individual Message'
                     new_message.save()
                     messages.success(request, "Error...")
                     return redirect('home')
@@ -526,17 +528,20 @@ def sendGroupMessageIndividual(request):
                     ans = sendWAMessage(phone, message, token)
 
                     if ans == True:
-                        individual_message.status = 'sent'
                         group_status.append([phone, individual_message.status])
+                        individual_message.status = 'sent'
+                        individual_message.send_method = 'Group Messages'
                         individual_message.save()
                    
                     
                     else:
                         group_status.append([phone, individual_message.status])
                         individual_message.status = 'error'
+                        individual_message.send_method = 'group messages'
                         individual_message.save()
                   
                 new_group_message.group_status = group_status
+                new_group_message.send_method = 'group messages'
                 new_group_message.save()
                
                 messages.success(request, "New Group Message send...")
