@@ -99,7 +99,7 @@ def whatsAppWebhook(request):
                             message_receiver = Sender.objects.get(phone_number_id=str(phoneNumber))
                             print('look here')
                             print(message_sender,message_receiver)
-                            received_message = Communication_Record.objects.create(sender=message_receiver,contact=message_sender,message_text=text,status='received')
+                            received_message = Communication_Record.objects.create(sender=message_receiver,contact=message_sender,message_text=text,send_method='Individual Response',status='received')
                             print('received_message')
                             received_message.save()
                             print('yes')
@@ -110,7 +110,7 @@ def whatsAppWebhook(request):
                         # message = '2'
                         # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
                         # ans = sendWAMessage(phone, message, token)
-                        string_test = 'Bearer EAAO1oqsZAGHUBO99iTLEEzpCEqdKdfF3qOpyEGS84MTuDFt8HnYqHAbulk4Pply9AaWfDDGxRtlJSLJslhyrN6GqB8SRT1L9sLaNEPQgYu3l9wZBvrkJKLlxLI0bU0FctGFeZBJNoVUMIwJTPJZAJXvrSKB3zjyYRocxDBQqXUhz0wtH4YYcVvJIX7teSMt4e3YB7e7V0QyhaoXK0SAZD'
+                        string_test = 'Bearer EAAO1oqsZAGHUBO9WWUe9juKckmnUp9f1qgJhAiQYrfujSaALkmz1ZAzvcyvg9ySB9QrZCPysYaP9MrHBAoJ4ffAdDIVfkaaRCgUtv8i18rMpoJU6d1gSf0SZBB1YHZBO5zztfK0ruuS0BuSRp7iHqX4WxaY9h39oQo2FSVYRhYchtqvjMCFVvhYdTrxNDiY9TUhVSwMIu2kt5sAjLGBcB'
     
                         headers = {"Authorization": string_test}
                         payload = {
