@@ -4,14 +4,16 @@ from django.contrib import messages
 from .models import Record, Communication_Record, Group_Record, Sender, Group_Communication_Record
 from .forms import AddRecordForm, AddGroupForm, AddSenderForm, ChatMessageForm, ChatGroupMessageForm
 from django import template
-import json,random, string, time, requests, re
-import phonenumbers
+import json,random, string, time, requests, re, phonenumbers, copy
 from phonenumbers import carrier
 from phonenumbers.phonenumberutil import number_type
 from email_validator import validate_email, EmailNotValidError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.safestring import mark_safe
+from .pageination import Pagination
+from django.http.request import QueryDict
 
 
 def validate_au_mobile(number):
@@ -185,7 +187,7 @@ def  delete_customer_record(request, pk):
         delete_customer = Record.objects.get(id=pk)
         delete_customer.delete()
         messages.success(request, "Record Deleted...")
-        return redirect('home')
+        return redirect('customer_record_management')
         
     else:
         messages.success(request, "Login First...")
@@ -287,7 +289,7 @@ def update_customer_record(request, pk):
                 if Record.objects.filter(phone=str(updateform.phone)).exists() == False:
                     updateform.save()
                     messages.success(request, "Record Updated...")
-                    return redirect('home')
+                    return redirect('customer_record_management')
                 else:
                     messages.success(request, "Phone Number Existed in Database")
                     
@@ -327,7 +329,7 @@ def  delete_group_record(request, pk):
         delete_group = Group_Record.objects.get(id=pk)
         delete_group.delete()
         messages.success(request, "Group Deleted...")
-        return redirect('home')
+        return redirect('group_record_management')
         
     else:
         messages.success(request, "Login First...")
@@ -363,7 +365,7 @@ def update_group_record(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Group Updated...")
-            return redirect('home')
+            return redirect('group_record_management')
         
         return render(request, 'update_group_record.html', {'form':form})
     
@@ -391,7 +393,7 @@ def  delete_sender_record(request, pk):
         delete_sender_record = Sender.objects.get(id=pk)
         delete_sender_record.delete()
         messages.success(request, "Group Deleted...")
-        return redirect('home')
+        return redirect('sender_record_management')
         
     else:
         messages.success(request, "Login First...")
@@ -449,7 +451,7 @@ def update_sender_record(request, pk):
                 #messages.success(request, "Sender Exist...")
             update_sender.save()
             messages.success(request, "Sender Updated...")
-            return redirect('home')
+            return redirect('sender_record_management')
         
         return render(request, 'update_sender_record.html', {'form':form})
     
@@ -552,4 +554,121 @@ def sendGroupMessageIndividual(request):
     else:
         messages.success(request, "Login First...")
         return redirect('home')
+    
+def customer_record_management(request):
+    # load data records
+    
+    # get search from url
+    data_dict ={}
+    search_value = request.GET.get('search',"")
+    
+    if search_value:
+        data_dict["phone__contains"]=search_value
+     
+    # get page_object to split page
+    search = Record.objects.filter(**data_dict)
+    
+    # get page_object to split page
+    page_object = Pagination(request, search)
+    
+    context = {
+            'search_value':search_value,
+            'records': page_object.search, 
+            "page_string": page_object.html()
+               }
+    
+    # check login
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        
+        # Authenticate
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Logged In")
+            return redirect('home')
+        else:
+            messages.success(request, "Error Login...")
+            return redirect('home')
+    else:          
+        return render(request, 'manage_customer.html', context)
+
+def group_record_management(request):
+    
+     # get search from url
+    data_dict ={}
+    search_value = request.GET.get('search',"")
+    
+    if search_value:
+        data_dict["group_name__contains"]=search_value
+     
+    # get page_object to split page
+    search = Group_Record.objects.filter(**data_dict)
+    
+    # get page_object to split page
+    page_object = Pagination(request, search)
+    
+    context = {
+            'search_value':search_value,
+            'group_records': page_object.search, 
+            "page_string": page_object.html()
+               }
+
+    
+    # check login
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        
+        # Authenticate
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Logged In")
+            return redirect('home')
+        else:
+            messages.success(request, "Error Login...")
+            return redirect('home')
+    else:          
+        return render(request, 'manage_group.html', context )
+
+def sender_record_management(request):
+    
+
+     # get search from url
+    data_dict ={}
+    search_value = request.GET.get('search',"")
+    
+    if search_value:
+        data_dict["phone_number_id__contains"]=search_value
+    
+    # get page_object to split page
+    search = Sender.objects.filter(**data_dict)
+    
+    # get page_object to split page
+    page_object = Pagination(request, search)
+    
+    context = {
+            'search_value':search_value,
+            'sender_records': page_object.search, 
+            "page_string": page_object.html()
+               }
+    
+    # check login
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        
+        # Authenticate
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Logged In")
+            return redirect('home')
+        else:
+            messages.success(request, "Error Login...")
+            return redirect('home')
+    else:          
+        return render(request, 'manage_sender.html', context)
 

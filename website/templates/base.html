@@ -213,7 +213,7 @@
                           <a href="{% url 'add_customer_record' %}">Add New Customer </a>
                       </li>
                       <li>
-                          <a href="#">Delete Customer </a>
+                          <a href="{% url 'customer_record_management' %}">Manage Customer </a>
                       </li>
                       
                   </ul>
@@ -228,7 +228,7 @@
                           <a href="{% url 'add_group_record' %}">Add New Group</a>
                       </li>
                       <li>
-                          <a href="#">Delete Group</a>
+                          <a href="{% url 'group_record_management' %}">Manage Group</a>
                       </li>
                       
                   </ul>
@@ -243,7 +243,7 @@
                           <a href="{% url 'add_sender_record' %}">Add New Sender</a>
                       </li>
                       <li>
-                          <a href="#">Delete Sender</a>
+                          <a href="{% url 'sender_record_management' %}">Manage Sender</a>
                       </li>
                       
                   </ul>
@@ -294,9 +294,6 @@
                       </li>
                       <li class="nav-item">
                         <a class="nav-link" href="#">Group</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="#">Sender</a>
                       </li>
                     </ul>
                   </div>

@@ -47,4 +47,10 @@ urlpatterns = [
     path('sendMessageIndividual', views.sendMessageIndividual, name='sendMessageIndividual'),
     
     path('sendGroupMessageIndividual', views.sendGroupMessageIndividual, name='sendGroupMessageIndividual'),
+    
+    
+    
+    path('customer_record_management', views.customer_record_management, name='customer_record_management'),
+    path('group_record_management', views.group_record_management, name='group_record_management'),
+    path('sender_record_management', views.sender_record_management, name='sender_record_management'),
 ]

@@ -19,7 +19,7 @@ class AddRecordForm(forms.ModelForm):
         
 class AddGroupForm(forms.ModelForm):
     
-    group_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Group Name",  "class": "form-control", "type":"number"}), label="")
+    group_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder": "Group Name",  "class": "form-control"}), label="")
     user = forms.ModelMultipleChoiceField(required=True, queryset=Record.objects, widget=forms.CheckboxSelectMultiple())
     
     class Meta:
@@ -41,7 +41,12 @@ class ChatMessageForm(forms.ModelForm):
     
     class Meta:
         model = Communication_Record
-        fields = ['message_text', ]
+        fields = ['sender', 'contact', 'message_text']
+        widgets = {
+            'sender': forms.Select(attrs={'class':'form-control'}),
+            'contact': forms.Select(attrs={'class':'form-control'}),
+            'message_text': forms.Textarea(attrs={'class':'form-control'}),
+        }
 
 class ChatGroupMessageForm(forms.ModelForm):
     sender = forms.ModelChoiceField(required=True, queryset=Sender.objects)
@@ -51,5 +56,9 @@ class ChatGroupMessageForm(forms.ModelForm):
     
     class Meta:
         model = Group_Communication_Record
-        fields = ['group_message_text', ]
-    
+        fields = ['sender', 'group', 'group_message_text']
+        widgets = {
+            'sender': forms.Select(attrs={'class':'form-control'}),
+            'group': forms.Select(attrs={'class':'form-control'}),
+            'message_text': forms.Textarea(attrs={'class':'form-control'}),
+        }
