@@ -671,4 +671,103 @@ def sender_record_management(request):
             return redirect('home')
     else:          
         return render(request, 'manage_sender.html', context)
+    
+def customer_page(request):
+    
+    if request.user.is_authenticated:
+        
+        # lookup records
+        customer_record = Record.objects.all()
+        chats = Communication_Record.objects.all()
+        
+        # all customer
+        customer_str_list = []
+        for i in customer_record:
+            name = str(i.first_name) + ' ' + str(i.last_name)
+            id = i.contact_id
+            element ='<div class="chat-user"><img class="chat-avatar" src="" alt=""><div class="chat-user-name"><a href="?ID={}">{}</a></div></div>'.format(id, name)
+            customer_str_list.append(element)
+            
+        customer_string = mark_safe("".join(customer_str_list))
+        
+        # all chats
+        chat_str_list = []
+        chat_onwer_id = request.GET.get("ID")
+        for i in chats:
+            author = i.contact
+            time = i.sent_datetime
+            message = i.message_text
+            status = i.status
+            if status == 'sent':
+                chat_status = 'left'
+                color = '#00FFFF'
+            elif status == 'received':
+                chat_status = 'right'
+                color = '#F5F5DC'
+            else:
+                chat_status = 'left'
+                color ='#DC143C'
+                
+            if i.contact.contact_id == chat_onwer_id:
+                chat_element = '<div class="chat-message {}"><img class="message-avatar" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""><div class="message" style="background:{}"><a class="message-author" href="#">{}</a><span class="message-date">{}</span><span class="message-content">{}</span></div></div>'.format(chat_status, color, author, time, message)
+                chat_str_list.append(chat_element)
+                
+        chat_srting = mark_safe("".join(chat_str_list))
+            #== customer_record.id or chat.sender.id == customer_record.id
+        
+        
+        return render(request, 'customer_page.html', {'customer_string':customer_string, 'chat_srting':chat_srting})
+    
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home') 
 
+def group_page(request):
+    
+    if request.user.is_authenticated:
+        
+        # lookup records
+        group_record = Group_Record.objects.all()
+        chats = Group_Communication_Record.objects.all()
+        
+        # all customer
+        customer_str_list = []
+        for i in group_record:
+            name = i.group_name
+            id = i.group_id
+            element ='<div class="chat-user"><img class="chat-avatar" src="" alt=""><div class="chat-user-name"><a href="?ID={}">{}</a></div></div>'.format(id, name)
+            customer_str_list.append(element)
+            
+        customer_string = mark_safe("".join(customer_str_list))
+        
+        # all chats
+        chat_str_list = []
+        chat_group_onwer_id = request.GET.get("ID")
+        for i in chats:
+            author = i.group
+            time = i.group_sent_datetime
+            message = i.group_message_text
+            status = i.group_status
+            if status == 'sent':
+                chat_status = 'left'
+                color = '#00FFFF'
+            elif status == 'received':
+                chat_status = 'right'
+                color = '#F5F5DC'
+            else:
+                chat_status = 'left'
+                color ='#DC143C'
+                
+            if i.group.group_id == chat_group_onwer_id:
+                chat_element = '<div class="chat-message {}"><img class="message-avatar" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt=""><div class="message" style="background:{}"><a class="message-author" href="#">{}</a><span class="message-date">{}</span><span class="message-content">{}</span></div></div>'.format(chat_status, color, author, time, message)
+                chat_str_list.append(chat_element)
+                
+        chat_srting = mark_safe("".join(chat_str_list))
+            #== customer_record.id or chat.sender.id == customer_record.id
+        
+        
+        return render(request, 'group_page.html', {'customer_string':customer_string, 'chat_srting':chat_srting})
+    
+    else:
+        messages.success(request, "Login First...")
+        return redirect('home') 
