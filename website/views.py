@@ -231,6 +231,9 @@ def home1(request):
 
             response = render(request, 'home1.html', current)
             request.session['userlogged'] = True
+            request.session['id_token'] = userData['id_token']
+            request.session['name'] = userData['name']
+            request.session['email'] = userData['email']
             response.set_cookie('sessiontoken', userData['id_token'], max_age=60*60*24, httponly=True)
 
             status = request.COOKIES.get('status')
@@ -242,7 +245,7 @@ def home1(request):
             token = getSession(request)
             print(token)
             if token is not None:
-                userData = jwt_sync.decode(token_2, REGION, USERPOOL_ID)
+                userData = jwt_sync.decode(token, REGION, USERPOOL_ID)
                 current['name'] = userData['name']
                 current['status'] = 1
                 response =  render(request, 'home1.html', current)
@@ -250,47 +253,6 @@ def home1(request):
             else:
                 messages.success(request, "Login First..")
                 return render(request, 'home1.html', {'status':0})
-
-        
-       
-        
-
-
-        #userData = decode_jwt.lambda_handler(token_2,None)
-        #print(userData)
-        #user = authenticate(request, id_token=request_getdata)
-        # if user:
-        #     login(request, user)
-        #     print('yes')
-        # # # Redirect or respond accordingly upon successful authentication
-        #     return HttpResponse('Authenticated')
-        # else:
-        # #     # Handle authentication failure
-        #     print('no')
-        #     return HttpResponse('Authentication failed')
-        
-
-   
-    # if request.method == 'POST':
-
-    #     token = json.loads(request.body)
-    #     print('hahah')
-    #     print (token)
-    # else:
-    #     print('yes')
-
-        # #id_token = request.POST.get("id_token") # Get the ID token from the frontend
-        # id_token = json.dumps(request.GET.get('tokendata'))
-        # print(id_token)
-        # user = authenticate(request, id_token=id_token)
-        # print(user)
-
-        # data = json.loads(request.body)
-        # print(data)
-        
-           
-
-        #messages.success(request, "Login First...")
     return render(request, 'home1.html')
 
     
@@ -298,6 +260,9 @@ def home1(request):
 def logout_user(request):
     try:
         del request.session['userlogged']
+        del request.session['id_token']
+        del request.session['name']
+        del request.session['email']
         messages.success(request, "Logged Out....")
     except keyError:
         pass
