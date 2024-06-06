@@ -16,6 +16,7 @@ import mysql.connector
 import os
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -58,7 +59,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+AUTHENTICATION_BACKENDS = [
+    # ...
+    'website.cognito_auth.CognitoAuthenticationBackend',
+]
 ROOT_URLCONF = 'whatsapptexting.urls'
 
 TEMPLATES = [
@@ -142,3 +146,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 WHATSAPP_URL ='https://graph.facebook.com/v18.0/248197898365415/messages'
 WHATSAPP_TOKEN = 'Bearer EAAO1oqsZAGHUBO94TDXju2TUoC2g17vL2zzyMBqz7ZAh4DkCY4R0aUhBivyPaZBHrUw0j2fWzZAfDA557wLhfJ18powpcv2YVLYH5Ouy3Trza2ksVkBK3ZBedyozsxA7yKv4Cn7KxiWkcT8ZAAIDeQOROHS4oMNWGlVMoVn7t3bCZABZBrE5cw2OtOEUubc1BqpHWIre0dO6ZAaVJirdVD74ZD'
+
+REDIRECT_URI = 'http://localhost:8000'
+TOKEN_ENDPOINT = 'https://5225a3test1.auth.us-east-1.amazoncognito.com/oauth2/token'
+
+CLIENT_ID = '3em6frsfg726bkb5kkbgn17l4r'
+USER_POOL_ID = 'us-east-1_c63xLDbhq'
+CLIENT_SECRET = 'qkdpl928cducncnu5ib551vkcs2cojn2lm6cer79utenu64nmhk'
+COGNITO_REGION_NAME = 'us-east-1'

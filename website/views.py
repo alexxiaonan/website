@@ -7,6 +7,7 @@ from django import template
 import json,random, string, time, requests, re, phonenumbers, copy
 from phonenumbers import carrier
 from phonenumbers.phonenumberutil import number_type
+from website import decode_jwt
 from email_validator import validate_email, EmailNotValidError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 from django.conf import settings
@@ -14,6 +15,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.safestring import mark_safe
 from .pageination import Pagination
 from django.http.request import QueryDict
+from django.http import HttpResponse
+from django.http import JsonResponse
+from cognitojwt import jwt_sync
+import time
 
 
 def validate_au_mobile(number):
@@ -55,6 +60,7 @@ def sendWAMessage(phoneNumber, message, token):
             "text": {"body":message}  
                }
     respone = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
+    
     # ans = respone.json()
     
     if respone.status_code == 200:
@@ -112,9 +118,10 @@ def whatsAppWebhook(request):
                         # message = '2'
                         # token = 'EAAO1oqsZAGHUBO6UOy4vzHncBwb8YWliGSZBl7cmAmlbsluBKiAUbTZCx7y1aOom2tib3zvrXUeZB5dOjbKB3x9dHqq1CVNQsM4wgWwZAqQqYYZBZCgVjdQvwgxVlDPOAfeUE5QjaGck4RFwFw8X0acFnBE5F67Yhj5oJlbFIeEG1ZACMxkH8LqkIb5P5hrNVBUZB5FxBdNeVDEwZCKLqIhPkZD'
                         # ans = sendWAMessage(phone, message, token)
-                        string_test = 'Bearer EAAO1oqsZAGHUBO9WWUe9juKckmnUp9f1qgJhAiQYrfujSaALkmz1ZAzvcyvg9ySB9QrZCPysYaP9MrHBAoJ4ffAdDIVfkaaRCgUtv8i18rMpoJU6d1gSf0SZBB1YHZBO5zztfK0ruuS0BuSRp7iHqX4WxaY9h39oQo2FSVYRhYchtqvjMCFVvhYdTrxNDiY9TUhVSwMIu2kt5sAjLGBcB'
-    
-                        headers = {"Authorization": string_test}
+                        string_test = Sender.objects.get(phone_number_id='15551289039')
+                        token = string_test.access_token
+                        
+                        headers = {"Authorization": token}
                         payload = {
                                   "messaging_product": "whatsapp",
                                   "recipient_type": "individual",
@@ -133,37 +140,167 @@ def whatsAppWebhook(request):
         return HttpResponse('success', status=200)
     
    
+# def home(request):
+    
+#     # load data records
+#     records = Record.objects.all()
+#     group_records = Group_Record.objects.all()
+#     sender_records = Sender.objects.all()
+    
+    
+    
+#     # check login
+#     if request.method == 'POST':
+#         username = request.POST["username"]
+#         password = request.POST["password"]
+        
+#         # Authenticate
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             messages.success(request, "Logged In")
+#             return redirect('home')
+#         else:
+#             messages.success(request, "Error Login...")
+#             return redirect('home')
+#     else:          
+#         return render(request, 'home.html', {'records': records, 'group_records': group_records, 'sender_records': sender_records})
+
+
+    
+
+def getTokens(code):
+    TOKEN_ENDPOINT = settings.TOKEN_ENDPOINT
+    
+    CLIENT_ID = settings.CLIENT_ID
+    CLIENT_SECRET = settings.CLIENT_SECRET
+    REGION = settings.COGNITO_REGION_NAME
+    USERPOOL_ID = settings.USER_POOL_ID
+
+    token_1 = code[1: ]
+    token_2 = token_1[:-1]
+    print(token_2)
+    claims = jwt_sync.decode(token_2, REGION, USERPOOL_ID)
+    print(claims)
+
+    if not claims:
+        return False
+    
+    user = {
+        'id_token': token_2,
+        'name': claims['cognito:username'],
+        'email': claims['email']
+    }
+    return user
+
+def getSession(request):
+    try:
+        response = request.COOKIES["sessiontoken"]
+        return response
+    except:
+        return None
+
 def home(request):
     
-    # load data records
-    records = Record.objects.all()
-    group_records = Group_Record.objects.all()
-    sender_records = Sender.objects.all()
-    
-    
-    
-    # check login
-    if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
-        
-        # Authenticate
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Logged In")
-            return redirect('home')
-        else:
-            messages.success(request, "Error Login...")
-            return redirect('home')
-    else:          
-        return render(request, 'home.html', {'records': records, 'group_records': group_records, 'sender_records': sender_records})
-    
+    if 'userlogged' in request.session:
+        print('yes')
+    else:
+        print('no')
+    #status_1 = request.session['userlogged']
+    #print(status_1)
 
+    return render(request, 'home.html')
+
+def test(request):
+    return render(request, 'test.html')
+
+
+@csrf_exempt
+def home1(request):  
+
+    current ={}
+    
+    if request.method == 'POST':
+        try:
+            request_getdata = request.POST.get('getdata', None)
+            #print(request_getdata)
+            userData = getTokens(request_getdata)
+            #print(userData)
+            current['name'] = userData['name']
+            current['status'] = 1
+
+            response = render(request, 'home1.html', current)
+            request.session['userlogged'] = True
+            response.set_cookie('sessiontoken', userData['id_token'], max_age=60*60*24, httponly=True)
+
+            status = request.COOKIES.get('status')
+            print('home1',status)
+
+            return response 
+            #return redirect('test.html') 
+        except:
+            token = getSession(request)
+            print(token)
+            if token is not None:
+                userData = jwt_sync.decode(token_2, REGION, USERPOOL_ID)
+                current['name'] = userData['name']
+                current['status'] = 1
+                response =  render(request, 'home1.html', current)
+                return response 
+            else:
+                messages.success(request, "Login First..")
+                return render(request, 'home1.html', {'status':0})
+
+        
+       
+        
+
+
+        #userData = decode_jwt.lambda_handler(token_2,None)
+        #print(userData)
+        #user = authenticate(request, id_token=request_getdata)
+        # if user:
+        #     login(request, user)
+        #     print('yes')
+        # # # Redirect or respond accordingly upon successful authentication
+        #     return HttpResponse('Authenticated')
+        # else:
+        # #     # Handle authentication failure
+        #     print('no')
+        #     return HttpResponse('Authentication failed')
+        
+
+   
+    # if request.method == 'POST':
+
+    #     token = json.loads(request.body)
+    #     print('hahah')
+    #     print (token)
+    # else:
+    #     print('yes')
+
+        # #id_token = request.POST.get("id_token") # Get the ID token from the frontend
+        # id_token = json.dumps(request.GET.get('tokendata'))
+        # print(id_token)
+        # user = authenticate(request, id_token=id_token)
+        # print(user)
+
+        # data = json.loads(request.body)
+        # print(data)
+        
+           
+
+        #messages.success(request, "Login First...")
+    return render(request, 'home1.html')
+
+    
 
 def logout_user(request):
-    logout(request)
-    messages.success(request, "Logged Out....")
+    try:
+        del request.session['userlogged']
+        messages.success(request, "Logged Out....")
+    except keyError:
+        pass
     return redirect('home')
 
 

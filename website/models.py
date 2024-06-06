@@ -1,6 +1,11 @@
 from django.db import models
 import uuid
 # Create your models here.
+class User(models.Model):
+    username = models.CharField(max_length=50)
+
+    def __str__(self):
+        return (f"{self.username}")
 
 class Record(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)

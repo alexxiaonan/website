@@ -2,7 +2,8 @@
 
 {% block content %}
 
-{% if request.session.userlogged %}   
+{% if request.session.userlogged %} 
+
 
 <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
   <div class="btn-group" role="group" aria-label="First group">
@@ -98,26 +99,42 @@
 
 
 
-{% else %}
+{% else %}   
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
 
 
-<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">Login & Sign up </h5>
-
-    <br>
-      <div class="mb-3">
-        <a href="https://5225a3test.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=1mc2fqr6eho90ak0tajeuv55gq&response_type=token&scope=email+openid+profile&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fhome1" classs="button">
-          <button type="button" class="btn btn-primary">Login</button>
-        </a>
-      </div>
+{% csrf_token %}
 
 
-  </div>
-</div>
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+    const currentUrl = window.location.hash.replace('#', '').split('&').reduce((prev, item) => {return Object.assign({[item.split('=')[0]]:[item.split('=')[1]]}, prev);},{});
 
+    const Token = currentUrl.id_token[0];
+    console.log(Token)
+    
+    $.ajax({
+        type: "POST",
+        url: "{% url 'home1' %}",
+        data: {'getdata':JSON.stringify(Token)},
+        success() {
+            console.log('Upload success');
+            window.location.href = 'http://localhost:8000/'
+            },
+            error() {
+            console.log('Upload error');
+            },
+    });
 
+       
+    </script> 
 
 
 </div>
