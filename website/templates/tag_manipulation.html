@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.session.userlogged %}
+
+{% csrf_token %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tag Manipulation</title>
+</head>
+<body>
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+
+    
+        <h3>Tag Manipulation for URLs</h3>
+        <br>
+    <div id="feedback-container"></div>
+    <form id="tag-manipulation-form" method="GET">
+        <label for="urls-insert">Enter URLs (separated by commas):</label>
+        <br>
+            <br>
+        <input type="text" id="urls-insert" name="urls" placeholder="e.g., http://example.com/image1, http://example.com/image2" required>
+        <br>
+        <br>
+            <br>
+        <label for="tags-insert">Enter Tags (separated by commas):</label>
+        <br>
+            <br>
+        <input type="text" id="tags-insert" name="tags" placeholder="e.g., nature, cityscape" required>
+        <br>
+        <br>
+            <br>
+        <label for="operation">Choose Operation:</label>
+        <select id="operation" name="operation">
+            <option value="add">Add Tags</option>
+            <option value="delete">Delete Tags</option>
+        </select>
+        <br>
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+
+    </form>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+{% endif %}
+
+{% endblock %}

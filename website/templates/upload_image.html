@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.session.userlogged %}   
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+</head>
+<body>
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+    <h3>Upload Image</h3>
+    <br>
+    <div id="feedback-container"></div>
+    <form id="upload-form">
+        <label for="image-file">Image File:</label>
+        <br>
+    <br>
+        <input type="file" id="image-file" name="image-file" required>
+        <br>
+        <br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var imageFile = document.getElementById('image-file').files[0];
+            alert("You have selected" + imageFile.value)
+            var formData = new FormData();
+            formData.append('image_file', imageFile, imageFile.value);
+            console.log(formData)
+
+            fetch('/upload_image/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(function(response) {
+                // Check if the response is successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+        return response.json();
+            })
+            .then(function(data) {
+                var feedbackContainer = document.getElementById('feedback-container');
+                feedbackContainer.innerHTML = '';
+
+                var feedbackElement = document.createElement('div');
+                feedbackElement.classList.add('alert');
+                feedbackElement.classList.add(data.success ? 'alert-success' : 'alert-danger');
+                feedbackElement.textContent = data.message;
+                feedbackContainer.appendChild(feedbackElement);
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+
+                var feedbackContainer = document.getElementById('feedback-container');
+                feedbackContainer.innerHTML = '';
+
+                var feedbackElement = document.createElement('div');
+                feedbackElement.classList.add('alert');
+                feedbackElement.classList.add('alert-danger');
+                feedbackElement.textContent = 'Error uploading the image. Please try again.';
+                feedbackContainer.appendChild(feedbackElement);
+            });
+        });
+    </script>
+</div>
+</div>
+</div>    
+</body>
+</html>
+
+{% else %}
+
+{% endif %}
+
+{% endblock %}

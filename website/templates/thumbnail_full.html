@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.session.userlogged %}   
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+
+  
+        <h3>Full-Size Picture URL</h3>
+   
+        <br>
+    <div id="feedback-container"></div>
+    <form id="thumbnail-form">
+        <label for="thumbnail-input">Enter Thumbnail URL:</label>
+        <br>
+        <br>
+        <input type="text" id="thumbnail-input" name="thumbnail" required placeholder="Enter thumbnail URL">
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <div class="card">
+        <div class="card-body">
+            {{ full_size_image }}
+        </div>
+      </div>
+
+</div>
+</div>
+</div>        
+</body>
+</html>
+{% else %}
+
+{% endif %}
+
+{% endblock %}

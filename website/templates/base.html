@@ -213,13 +213,10 @@
 
               <li>
                 <hr>
-                  <a  href="#CustomerSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">Manage Customer</a>
+                  <a  href="#CustomerSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">Upload</a>
                   <ul class="collapse list-unstyled" id="CustomerSubmenu">
                       <li>
-                          <a href="{% url 'add_customer_record' %}">Add New Customer </a>
-                      </li>
-                      <li>
-                          <a href="{% url 'customer_record_management' %}">Manage Customer </a>
+                          <a href="{% url 'upload_image' %}">Image Upload</a>
                       </li>
                       
                   </ul>
@@ -228,42 +225,35 @@
 
               <li>
                 <hr>
-                  <a  href="#GroupSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">Manage Group</a>
+                  <a  href="#GroupSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">Search</a>
                   <ul class="collapse list-unstyled" id="GroupSubmenu">
                       <li>
-                          <a href="{% url 'add_group_record' %}">Add New Group</a>
+                          <a href="{% url 'tag_search' %}">Search by Tags</a>
                       </li>
                       <li>
-                          <a href="{% url 'group_record_management' %}">Manage Group</a>
+                          <a href="{% url 'thumbnail_full' %}">Search by URL</a>
                       </li>
+                      <li>
+                        <a href="{% url 'image_similar' %}">Search by Image</a>
+                    </li>
                       
                   </ul>
               </li>
 
-              <li>
-                <hr>
-                  <a href="#SenderSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">Manage Sender</a>
-                  
-                  <ul class="collapse list-unstyled" id="SenderSubmenu">
-                      <li>
-                          <a href="{% url 'add_sender_record' %}">Add New Sender</a>
-                      </li>
-                      <li>
-                          <a href="{% url 'sender_record_management' %}">Manage Sender</a>
-                      </li>
-                      
-                  </ul>
-              </li>
 
           </ul>
           
           <ul class="list-unstyled CTAs">
               <li>
-                  <a href="{% url 'sendMessageIndividual' %}" style="background-color:#7FFFD4">New Individual Message</a>
+                  <a href="{% url 'tag_manipulation' %}" style="background-color:#7FFFD4">Tag Manipulation</a>
               </li>
               <li>
-                  <a href="{% url 'sendGroupMessageIndividual' %}" style="background-color:#7FFFD4">New Group Messages</a>
+                <a href="{% url 'delete_image' %}" style="background-color:#7FFFD4">Delete Image</a>
               </li>
+              <li>
+                <a href="{% url 'subscribe' %}" style="background-color:#7FFFD4">Subscribe</a>
+              </li>
+              
           </ul>
 
           {% else %}
@@ -296,10 +286,7 @@
                     {% if request.session.userlogged %}
 
                       <li class="nav-item">
-                        <a class="nav-link" href="{% url 'customer_page' %}">Customer</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'group_page' %}">Group</a>
+                        <a class="nav-link" href="{% url 'upload_image' %}">Upload Image</a>
                       </li>
                     </ul>
                   </div>

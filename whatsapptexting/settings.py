@@ -31,7 +31,8 @@ SECRET_KEY = 'django-insecure-m@%84alef&%fvdp0h8l@06put@bsf5#csosyj331y#mco9(+5h
 DEBUG = True
 #  这里的这几个都需要改回来
 #<<<<<<< HEAD
-ALLOWED_HOSTS = ['localhost','127.0.0.1', '34.129.239.143']
+#ALLOWED_HOSTS = ['localhost','127.0.0.1', '34.129.239.143']
+ALLOWED_HOSTS = ['*']
 #=======
 # ALLOWED_HOSTS = ['texting.alexxhometest.com', '34.129.239.143','0.0.0.0']
 #>>>>>>> c2398958351fe763754d386c87f27f3b629303a1

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.session.userlogged %}
+
+{% csrf_token %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tag Manipulation</title>
+</head>
+<body>
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subscribe_Tag</title>
+</head>
+<body>
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+
+    <div class=col-sm4>
+        <h3>
+            Subscribe Tag
+        </h3>
+    </div>
+            <br>
+            <br>
+            <br>
+    <div class=container id="form_container">
+        <form id="subscribe_form" methon="GET">
+            <label for="sub_form_id">Subscribe Tags:</label>
+            <br>
+            <br>
+            <input type="text" id="sub_form_id" name="sub_form_id" placeholder="Only one Tag" required>
+            <br>
+            <br>
+            <button type="submit_form">Submit</button>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+   
+</body>
+</html>
+{% else %}
+
+{% endif %}
+
+{% endblock %}

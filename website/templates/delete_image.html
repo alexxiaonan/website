@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.session.userlogged %}   
+<!DOCTYPE html>
+<html>
+<body>
+
+ 
+        
+  
+    <div class="car d">
+        <div class="card-body">
+      <div class='col-md-6 offset-md-3'>
+        <h3>Delete Image by URLs</h3>
+        <br>
+    <div id="feedback-container"></div>  
+    <form id="delete-image-form" method="GET">
+        <label for="tags-input">Enter Image URLs (separated by commas):</label>
+        <br>
+        <br>
+        <input type="text" id="delet-image-url" name="deleteUrl" required placeholder="Enter Image URL">
+        <br>
+        <br>
+        <button type="submit">submit</button>
+    </form>
+</div>
+</div>
+</div>   
+   
+</body>
+</html>
+{% else %}
+
+{% endif %}
+
+{% endblock %}
