@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-#from .models import Record, Communication_Record, Group_Record, Sender, Group_Communication_Record
-#from .forms import AddRecordForm, AddGroupForm, AddSenderForm, ChatMessageForm, ChatGroupMessageForm
 from django import template
-import json,random, string, time, requests, re, phonenumbers, copy
-from phonenumbers import carrier
-from phonenumbers.phonenumberutil import number_type
+import json, random, string, time, requests, re, copy
 #from website import decode_jwt
 from email_validator import validate_email, EmailNotValidError
 from django.template.response import TemplateResponse
@@ -14,14 +10,12 @@ from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, Http
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.safestring import mark_safe
-from .pageination import Pagination
 from django.http.request import QueryDict
 from django.http import HttpResponse
 from django.http import JsonResponse
 from cognitojwt import jwt_sync
-import time
 import base64
-import re
+
 
 
 def getTokens(code):
